@@ -1,1 +1,0 @@
-rtaccommodationsolutions.github.io
