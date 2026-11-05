@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | RT Accommodation Solutions</title>
+  <meta name="description" content="Get in touch with RT Accommodation Solutions.">
+  <link rel="icon" type="image/png" href="images/brand/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a href="index.html" class="brand"><img src="images/brand/rt-logo.png" alt="" width="50" height="47"><span>RT Accommodation Solutions<small>Your Home Away From Home</small></span></a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <nav class="nav" id="site-nav">
+        <a href="about.html">About</a>
+        <a href="containers.html">Containers</a>
+        <a href="contact.html" class="btn" aria-current="page">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="page-head">
+      <div class="wrap">
+        <h1>Contact us</h1>
+        <p class="lede">Tell us about your project and how many people you need to house. We'll reply with the right units and a quote.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap contact-grid">
+        <ul class="contact-list">
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></span><div><b>Phone</b><span class="v"><span class="todo">000 000 0000</span></span></div></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14"/><path d="M3 6l9 7 9-7"/></svg></span><div><b>Email</b><span class="v"><span class="todo">info@your-domain.co.za</span></span></div></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/></svg></span><div><b>WhatsApp</b><span class="v"><span class="todo">000 000 0000</span></span></div></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><div><b>Office</b><span class="v"><span class="todo">Street address, town</span></span></div></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><b>Hours</b><span class="v"><span class="todo">Mon to Fri, 08:00 to 17:00</span></span></div></li>
+        </ul>
+
+        <!-- The form opens the visitor's email app with the message filled in.
+             Set the address in js/main.js (CONTACT_EMAIL). -->
+        <form class="form" id="enquiry" novalidate>
+          <h2>Send an enquiry</h2>
+          <div class="row">
+            <label>Name<input name="name" autocomplete="name" required></label>
+            <label>Company<input name="company" autocomplete="organization"></label>
+          </div>
+          <div class="row">
+            <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          </div>
+          <div class="row">
+            <label>Unit you're interested in<select name="unit" id="unit"><option>Not sure yet</option><option>A mix of units</option><option>Manager Unit</option><option>Skilled Labour Unit</option><option>Labour Unit</option><option>Weekly Worker Unit</option></select></label>
+            <label>Number of people<input name="people" inputmode="numeric"></label>
+          </div>
+          <label>Message<textarea name="message" placeholder="Where is the site, and how long will you need accommodation?"></textarea></label>
+          <button class="btn" type="submit">Send enquiry</button>
+          <p class="hint" id="enquiry-hint">This opens your email app with your message ready to send.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; <span id="year">2026</span> RT Accommodation Solutions</span>
+      <nav aria-label="Footer">
+        <a href="about.html">About</a>
+        <a href="containers.html">Containers</a>
+        <a href="demos/rt-laundry/index.html">RT Laundry demo</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
