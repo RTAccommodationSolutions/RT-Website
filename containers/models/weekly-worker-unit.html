@@ -54,6 +54,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   <div><span style="background:#F4F5F6"></span>Fridge, stove and aircon</div>
   <div><span style="background:#D5D9DE"></span>Microwave and sink</div>
   <div><span style="background:#D2B27F"></span>Pine counters and shelves</div>
+  <div><span style="background:#2F5A8C"></span>Painted floor</div>
   <div><span style="background:#34383D"></span>Shower tiles</div>
   <div><span style="background:#8EB6DA"></span>Glass</div>
 </div>
@@ -115,7 +116,7 @@ scene.add(sun);
 
 const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.8,metalness:0.05},o));
 const mat={
-  shell:M(0xE6E8EB), wall:M(0xF1F0F3), floor:M(0x857565,{roughness:0.7}), dark:M(0x3B4148), timber:M(0xC9A36B),
+  shell:M(0xE6E8EB), wall:M(0xF1F0F3), floor:M(0x2F5A8C,{roughness:0.55}), dark:M(0x3B4148), timber:M(0xC9A36B),
   ground:M(0xC2AD8E,{roughness:1}), frame:M(0x1F2227,{metalness:0.3,roughness:0.5}),
   glass:M(0x8EB6DA,{transparent:true,opacity:0.32,roughness:0.1,metalness:0.1}),
   curtain:M(0xF7F4EC,{transparent:true,opacity:0.82,side:THREE.DoubleSide}),
@@ -142,8 +143,7 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80),mat.ground); ground.r
 box(-T,IL+T,-0.12,0,-T,IW+T,mat.dark);
 for (const x of [0.6,IL/2,IL-0.6]) box(x-0.3,x+0.3,-0.18,-0.12,-T-0.1,IW+T+0.1,mat.timber);
 box(0,IL,0,0.005,0,IW,mat.floor);
-// faint plank lines on the vinyl floor
-for (let z=0.2; z<IW; z+=0.2) box(0,IL,0.005,0.006,z-0.004,z+0.004,M(0x76685A));
+// painted blue floor, as in RT's photo
 
 // wall with openings, running along x, occupying z0..z1
 function wall(z0,z1,ops,m,parent){
@@ -211,6 +211,22 @@ function hingedDoor(ha, hz, w, ang){                           // white leaf sta
   g.rotation.y=ang;
 }
 
+// ---------- lockers, as in RT's photo: three stacked doors (one per bunk level), each with a key lock and a bar handle ----------
+const lockerGrey=M(0xC8CBD1), brass=M(0xC2A55A,{metalness:0.3,roughness:0.4}), silver=M(0xC3C8CE,{metalness:0.2,roughness:0.35});
+function lockers(axis, face, out, u0, u1, h){
+  const P=(u,v,y0,y1,d0,d1,m)=> axis==='x' ? B(face+out*d0-(out<0?d1-d0:0),face+out*d0+(out>0?d1-d0:0),y0,y1,u,v,m)
+                                           : B(u,v,y0,y1,face+out*d0-(out<0?d1-d0:0),face+out*d0+(out>0?d1-d0:0),m);
+  const step=h/3;
+  for (let i=1;i<3;i++) P(u0,u1,i*step-0.005,i*step+0.005,0,0.003,mat.vent);   // gaps between the doors
+  P(u0,u1,h-0.01,h,0,0.003,mat.vent);
+  const hu=u0+0.07;                                                            // handles near the opening edge
+  for (let i=0;i<3;i++){
+    const top=(i+1)*step;
+    P(hu-0.012,hu+0.012,top-0.42,top-0.20,0.012,0.03,silver);              // bar handle
+    P(hu-0.012,hu+0.012,top-0.42,top-0.40,0,0.012,silver); P(hu-0.012,hu+0.012,top-0.22,top-0.20,0,0.012,silver);
+    P(hu-0.014,hu+0.014,top-0.16,top-0.132,0,0.015,brass);                     // key lock
+  }
+}
 // ---------- triple bunk: lies along x (a) or z; head end gets the pillows, ladder on the aisle side ----------
 function tripleBunk(a0,a1,z0,z1,alongA,head){
   const P=0.045, TOP=2.08;
@@ -223,32 +239,41 @@ function tripleBunk(a0,a1,z0,z1,alongA,head){
     if (alongA){ const pa= head==='lo' ? [a0+0.08,a0+0.42] : [a1-0.42,a1-0.08]; B(pa[0],pa[1],y+0.13,y+0.22,z0+0.14,z1-0.14,mat.pillow); }
     else B(a0+0.14,a1-0.14,y+0.13,y+0.22,z0+0.08,z0+0.42,mat.pillow);   // head on the rear wall
   }
-  if (alongA){                                                   // aisle side is z1 (front)
-    for (const y of [TI[1],TI[2]]) B(a0,a1,y+0.13,y+0.30,z1-P,z1,mat.frame);
-    const fa= head==='lo' ? a1-0.50 : a0+0.20;
-    for (const a of [fa,fa+0.32]) B(a,a+0.03,0,TI[2]+0.30,z1,z1+0.03,mat.frame);
-    for (let y=0.45;y<TI[2]+0.2;y+=0.27) B(fa,fa+0.35,y-0.015,y+0.015,z1,z1+0.03,mat.frame);
-  } else {                                                       // aisle side faces the middle of the room
-    const side= a0<1 ? a1 : a0-0.03, rail= a0<1 ? [a1-P,a1] : [a0,a0+P];
-    for (const y of [TI[1],TI[2]]) B(rail[0],rail[1],y+0.13,y+0.30,z0+0.60,z1,mat.frame);
-    for (const z of [z0+0.20,z0+0.54]) B(side,side+0.03,0,TI[2]+0.30,z,z+0.03,mat.frame);
-    for (let y=0.45;y<TI[2]+0.2;y+=0.27) B(side,side+0.03,y-0.015,y+0.015,z0+0.20,z0+0.57,mat.frame);
+  // ladders lean on the open long side, hooked over the top rail, foot out in the aisle (as in RT's photo)
+  if (alongA){                                                   // aisle side is z1 (front); ladder at the corner end, by the cross bunk
+    const r= head==='lo' ? [a0+0.50,a1] : [a0,a1-0.50];
+    for (const y of [TI[1],TI[2]]) B(r[0],r[1],y+0.13,y+0.30,z1-P,z1,mat.frame);
+    const la= head==='lo' ? a0+0.08 : a1-0.43;
+    ladder(la+0.175,z1,'z');
+  } else {                                                       // aisle side faces the middle of the room, ladder on the open part
+    const side= a0<1 ? a1 : a0, out= a0<1 ? 1 : -1, rail= a0<1 ? [a1-P,a1] : [a0,a0+P];
+    for (const y of [TI[1],TI[2]]) B(rail[0],rail[1],y+0.13,y+0.30,0.96,z1,mat.frame);   // no ladder: one ladder per corner, on the back-wall bunk
   }
+}
+// leaning ladder: top on the bunk face at (fa,fz), foot 0.38 m out into the aisle
+function ladder(fa,fz,dir){
+  const TOPY=TI[2]+0.30, OUT=0.38, L=Math.hypot(TOPY,OUT), th=Math.atan2(OUT,TOPY), w=0.35;
+  const g=new THREE.Group(); root.add(g);
+  const lad=new THREE.Group(); g.add(lad);
+  for (const s of [-w/2,w/2-0.035]) box(s,s+0.035,0,L,-0.0175,0.0175,mat.frame,lad);
+  for (let y=0.30;y<L-0.15;y+=0.28) box(-w/2,w/2,y-0.015,y+0.015,-0.012,0.012,mat.frame,lad);
+  box(-w/2,-w/2+0.035,L-0.02,L+0.01,-0.07,0.0175,mat.frame,lad); box(w/2-0.035,w/2,L-0.02,L+0.01,-0.07,0.0175,mat.frame,lad); // hooks over the rail
+  if (dir==='z'){ g.position.set(fa,0,fz+OUT); lad.rotation.x=-th; }
+  else { lad.rotation.y= dir==='x+'? Math.PI/2 : -Math.PI/2; g.position.set(fa+(dir==='x+'?OUT:-OUT),0,fz); g.rotation.z= dir==='x+'? th : -th; }
 }
 // bed 1 and bed 4 across the width, cupboard beside each on the front wall
 for (const a0 of CROSS){
   tripleBunk(a0,a0+BW,0.02,0.02+BL,false);
-  B(a0,a0+BW,0,2.10,IW-CLZ,IW,mat.cup);
-  const da= a0<1 ? a0+BW : a0;                                    // door faces the aisle
-  B(da-0.003,da+0.003,0.03,2.07,IW-CLZ/2-0.004,IW-CLZ/2+0.004,mat.handle);
-  for (const z of [IW-CLZ/2-0.06,IW-CLZ/2+0.04]) B(a0<1?da:da-0.02,a0<1?da+0.02:da,0.95,1.20,z,z+0.02,mat.handle);
+  B(a0,a0+BW,0,2.22,IW-CLZ,IW,lockerGrey);
+  lockers('x', a0<1 ? a0+BW : a0, a0<1 ? 1 : -1, IW-CLZ, IW, 2.22);   // doors face the aisle
 }
 // bed 2 and bed 3 lengthwise along the rear wall, two cupboards between them
 for (const [a0,end] of ALONG) tripleBunk(a0,a0+BL,0.02,0.02+BW,true,end);
+// painted timber dividers at the head end of each back-wall bunk, screening it from the end bunk beside it
+B(0.925,0.948,0,2.22,0,0.98,mat.white); B(4.66+BL+0.004,4.66+BL+0.027,0,2.22,0,0.98,mat.white);
 for (const [c0,c1] of CUPS){
-  B(c0,c1,0,2.10,0,0.60,mat.cup);
-  const cm=(c0+c1)/2; B(cm-0.004,cm+0.004,0.03,2.07,0.60,0.603,mat.handle);
-  for (const a of [cm-0.06,cm+0.04]) B(a,a+0.02,0.95,1.20,0.603,0.62,mat.handle);
+  B(c0,c1,0,2.10,0,0.60,mat.white);
+  lockers('z', 0.60, 1, c0, c1, 2.10);
 }
 // aircon over the cupboards, outdoor unit outside
 { const c=(CUPS[0][0]+CUPS[1][1])/2;
