@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skilled Labour Unit 3D Model</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+<style>
+/* Full-bleed 3D stage with three floating panels: title (top left), key (top right), view controls (bottom). RT blue palette. */
+:root{
+  --bg:#F2F5F9; --panel:#FFFFFF; --ink:#1A2B45; --muted:#5D6F8A; --accent:#1B3A6B; --accent-ink:#FFFFFF; --line:#D0D9E8;
+  --f-display:"Archivo",system-ui,sans-serif; --f-body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#0F1622; --panel:#172031; --ink:#EAF0F8; --muted:#A9B6C9; --accent:#8FB0DF; --accent-ink:#0F1B2E; --line:#2D3A50; color-scheme:dark; }
+}
+:root[data-theme="dark"]{ --bg:#0F1622; --panel:#172031; --ink:#EAF0F8; --muted:#A9B6C9; --accent:#8FB0DF; --accent-ink:#0F1B2E; --line:#2D3A50; color-scheme:dark; }
+*,*::before,*::after{box-sizing:border-box;border-radius:0}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none}
+.top{position:fixed;left:max(16px,env(safe-area-inset-left,0px));top:calc(16px + env(safe-area-inset-top,0px));max-width:min(400px,calc(100% - 32px));background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--accent);padding:12px 16px}
+.top h1{margin:0 0 4px;font-family:var(--f-display);font-size:20px;font-weight:850;font-stretch:118%;letter-spacing:-.01em}
+.top p{margin:0;font-size:13px;line-height:1.45;color:var(--muted)}
+.bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:6px;justify-content:center;background:var(--panel);border:1px solid var(--line);padding:6px;max-width:calc(100% - 24px)}
+.group{display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center}
+.group + .group{border-left:1px solid var(--line);padding-left:6px}
+button{font:inherit;font-size:13px;font-weight:600;min-height:40px;padding:0 11px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.key{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(16px + env(safe-area-inset-top,0px));background:var(--panel);border:1px solid var(--line);padding:10px 14px;font-size:12.5px;line-height:1.75;color:var(--muted)}
+.key span{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:6px;border:1px solid rgba(0,0,0,.2)}
+.err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted)}
+.embed .top,.embed .key{display:none}
+.embed .bar{bottom:8px}
+@media (max-width:760px){ .key{display:none} .top p{display:none} .group + .group{border-left:0;padding-left:0} }
+@media (max-width:560px){ .bar{left:8px;right:8px;transform:none;max-width:none;gap:4px;padding:4px} button{font-size:12px;min-height:36px;padding:0 8px} }
+</style>
+</head>
+<body>
+<div id="stage" aria-label="3D model of the Skilled Labour Unit. Drag to rotate, scroll or pinch to zoom."></div>
+<div class="top">
+  <h1>Skilled Labour Unit</h1>
+  <p>Concept model from RT's staff container sketch: four rooms, each with a three-quarter bed, tall cupboard, small kitchenette and its own door, with a shared bathroom between each pair of rooms, closed off from each room by a canvas curtain. Drag to turn, scroll or pinch to zoom, right-drag to pan.</p>
+</div>
+<div class="key" aria-hidden="true">
+  <div><span style="background:#D2B27F"></span>Pine counter and shelf</div>
+  <div><span style="background:#A9AEB6"></span>Cupboards and drawers</div>
+  <div><span style="background:#F4F5F6"></span>Mini fridge and aircon</div>
+  <div><span style="background:#D5D9DE"></span>Microwave and sink</div>
+  <div><span style="background:#34383D"></span>Shower tiles</div>
+  <div><span style="background:#3D5F8F"></span>Canvas curtain</div>
+  <div><span style="background:#8EB6DA"></span>Glass</div>
+</div>
+<div class="bar" role="toolbar" aria-label="View controls">
+  <div class="group">
+    <button type="button" data-view="front">Front</button>
+    <button type="button" data-view="top">Top</button>
+    <button type="button" data-view="bed">Room</button>
+    <button type="button" data-view="kitchen">Kitchenette</button>
+    <button type="button" data-view="bath">Bathroom</button>
+  </div>
+  <div class="group">
+    <button type="button" id="tRoof" aria-pressed="false">Roof</button>
+    <button type="button" id="tFront" aria-pressed="false">Front wall</button>
+  </div>
+</div>
+<div class="err" id="err">The 3D viewer couldn't start in this browser. Try Chrome, Edge or Safari with hardware acceleration switched on.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add('embed');
+if (!window.THREE || !THREE.OrbitControls){ document.getElementById('err').style.display='flex'; return; }
+
+// ---------- dimensions (m), ASSUMED until the engineer's drawings arrive ----------
+// 12 m container, internal ~11.9 x 2.30 x 2.40, two mirrored halves around a centre wall.
+// Layout from RT's "Staff Container" sketch, per half from the end wall (a = 0) to the centre wall (a = 5.93):
+// end room | shared bathroom | inner room. Each room: 3/4 bed on the rear wall, tall cupboard at the
+// bathroom end, small kitchenette across from it on the front wall, its own single door on the front wall;
+// a canvas curtain from each room into the shared bathroom.
+const IL=11.90, IW=2.30, H=2.40, T=0.06, CW=[5.93,5.97];
+const WALL1=2.45, WALL2=3.50;            // bathroom walls (a); bathroom between them
+const DW=[0.75,1.45];                    // open doorway into the bathroom from each room (z)
+const DOORS=[[0.15,1.00],[4.97,5.82]];    // single hinged doors on the front wall: end room, inner room
+const WINS=[[0.45,1.35],[4.55,5.45]];     // windows on the rear wall above each bed
+
+// ---------- scene ----------
+const stage=document.getElementById('stage');
+let renderer;
+try { renderer=new THREE.WebGLRenderer({antialias:true}); } catch(e){ document.getElementById('err').style.display='flex'; return; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xDCE6EE);
+scene.fog=new THREE.Fog(0xDCE6EE,30,70);
+const camera=new THREE.PerspectiveCamera(40,1,0.05,200);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.maxPolarAngle=Math.PI*0.495; controls.minDistance=0.6; controls.maxDistance=40;
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a7a6a,0.8));
+const sun=new THREE.DirectionalLight(0xffffff,0.7);
+sun.position.set(-5,12,9); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-9,right:9,top:6,bottom:-6,near:1,far:40}); sun.shadow.bias=-0.0005;
+scene.add(sun);
+
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.8,metalness:0.05},o));
+const mat={
+  shell:M(0xE6E8EB), wall:M(0xF1F0F3), floor:M(0x857565,{roughness:0.7}), dark:M(0x3B4148), timber:M(0xC9A36B),
+  ground:M(0xC2AD8E,{roughness:1}), frame:M(0x1F2227,{metalness:0.3,roughness:0.5}),
+  glass:M(0x8EB6DA,{transparent:true,opacity:0.32,roughness:0.1,metalness:0.1}),
+  curtain:M(0xF7F4EC,{transparent:true,opacity:0.82,side:THREE.DoubleSide}),
+  white:M(0xF4F5F6), porcelain:M(0xFBFBFB,{roughness:0.35}), tile:M(0x34383D,{roughness:0.6}),
+  cup:M(0xA9AEB6), handle:M(0x8A8F96,{metalness:0.6,roughness:0.4}), pine:M(0xD2B27F,{roughness:0.7}),
+  greyWall:M(0x9CA3AD), steel:M(0xD5D9DE,{metalness:0.25,roughness:0.35}), black:M(0x2A2E33,{roughness:0.5}),
+  duvet:M(0x9AA0A9), base:M(0x4C525B), pillow:M(0x80868F), towel:M(0x2F3338), mat:M(0x2F6B55), plate:M(0xFAFAFA,{roughness:0.3}),
+  vent:M(0x6C737C), trim:M(0x2E4E73), led:M(0xFFFFFF,{emissive:0xFFFFFF,emissiveIntensity:0.4})
+};
+const root=new THREE.Group(); root.position.set(-IL/2,0.18,-IW/2); scene.add(root);
+// box in interior coords: x along the length, y up, z from the rear wall (0) to the front wall (IW)
+function box(x0,x1,y0,y1,z0,z1,m,parent){
+  const g=new THREE.Mesh(new THREE.BoxGeometry(Math.max(x1-x0,0.001),Math.max(y1-y0,0.001),Math.max(z1-z0,0.001)),m);
+  g.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2); g.castShadow=true; g.receiveShadow=true;
+  (parent||root).add(g); return g;
+}
+function cyl(x,y0,y1,z,r,m,parent,seg){
+  const g=new THREE.Mesh(new THREE.CylinderGeometry(r,r,y1-y0,seg||16),m);
+  g.position.set(x,(y0+y1)/2,z); g.castShadow=true; g.receiveShadow=true; (parent||root).add(g); return g;
+}
+
+// ---------- shell ----------
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80),mat.ground); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+box(-T,IL+T,-0.12,0,-T,IW+T,mat.dark);
+for (const x of [0.6,IL/2,IL-0.6]) box(x-0.3,x+0.3,-0.18,-0.12,-T-0.1,IW+T+0.1,mat.timber);
+box(0,IL,0,0.005,0,IW,mat.floor);
+// faint plank lines on the vinyl floor
+for (let z=0.2; z<IW; z+=0.2) box(0,IL,0.005,0.006,z-0.004,z+0.004,M(0x76685A));
+
+// wall with openings, running along x, occupying z0..z1
+function wall(z0,z1,ops,m,parent){
+  const edges=[...new Set([-T,IL+T,...ops.flatMap(o=>[o.a,o.b])])].sort((p,q)=>p-q);
+  for (let i=0;i<edges.length-1;i++){
+    const a=edges[i], b=edges[i+1]; if (b-a<1e-6) continue;
+    const cov=ops.filter(o=>o.a<=a+1e-6 && o.b>=b-1e-6).sort((p,q)=>p.y0-q.y0);
+    let cur=0; for (const o of cov){ if (o.y0>cur) box(a,b,cur,o.y0,z0,z1,m,parent); cur=Math.max(cur,o.y1); }
+    if (cur<H) box(a,b,cur,H,z0,z1,m,parent);
+  }
+}
+const mir=a=>IL-a;
+const span=(a,b,m)=>m?[mir(b),mir(a)]:[a,b];
+const frontGroup=new THREE.Group(); root.add(frontGroup);
+const ops=[], wins=[];
+for (const m of [false,true]){
+  for (const D of DOORS){ const d=span(D[0],D[1],m); ops.push({a:d[0],b:d[1],y0:0,y1:2.05,door:true}); }
+  for (const Wn of WINS){ const w=span(Wn[0],Wn[1],m); wins.push({a:w[0],b:w[1],y0:1.05,y1:1.85}); }
+}
+wall(-T,0,wins,mat.shell);
+for (const o of wins){
+  box(o.a,o.b,o.y0,o.y1,-T/2-0.004,-T/2+0.004,mat.glass);
+  box(o.a-0.03,o.b+0.03,o.y0-0.03,o.y0,-T-0.02,-T,mat.white); box(o.a-0.03,o.b+0.03,o.y1,o.y1+0.03,-T-0.02,-T,mat.white);
+  box(o.a-0.03,o.a,o.y0,o.y1,-T-0.02,-T,mat.white); box(o.b,o.b+0.03,o.y0,o.y1,-T-0.02,-T,mat.white);
+}
+wall(IW,IW+T,ops,mat.shell,frontGroup);
+for (const o of ops){
+  const zz=IW+T/2;
+  {
+    // single hinged entrance door: white leaf in a blue frame, handle on the latch side
+    box(o.a+0.04,o.b-0.04,0.02,o.y1-0.04,zz-0.02,zz+0.02,mat.white,frontGroup);
+    for (const [x0,x1,y0,y1] of [[o.a,o.b,o.y1-0.04,o.y1],[o.a,o.a+0.04,0,o.y1],[o.b-0.04,o.b,0,o.y1]]) box(x0,x1,y0,y1,zz-0.035,zz+0.035,mat.trim,frontGroup);
+    const hx=o.a<IL/2?o.b-0.12:o.a+0.12;
+    for (const z of [IW+T+0.02,IW-0.04]) box(hx-0.06,hx+0.06,0.98,1.01,z,z+0.03,mat.handle,frontGroup);
+  }
+}
+box(-T,0,0,H,0,IW,mat.shell); box(IL,IL+T,0,H,0,IW,mat.shell);
+box(CW[0],CW[1],0,H,0,IW,mat.wall);
+for (const x of [-T-0.04,IL+T]) for (const z of [-T-0.04,IW+T]) box(x,x+0.04,-0.12,H+0.1,z,z+0.04,mat.dark);
+const roofGroup=new THREE.Group(); roofGroup.visible=false; root.add(roofGroup);
+const roof=roofGroup; box(-T-0.04,IL+T+0.04,H,H+0.1,-T-0.04,IW+T+0.04,mat.shell,roofGroup);
+
+// ---------- one half (mirrored for the second) ----------
+function room(m){
+  const B=(a0,a1,y0,y1,z0,z1,mt,parent)=>{ const s=span(a0,a1,m); return box(s[0],s[1],y0,y1,z0,z1,mt,parent); };
+  const C=(a,y0,y1,z,r,mt,parent,seg)=>cyl(m?mir(a):a,y0,y1,z,r,mt,parent,seg);
+
+  // --- walls either side of the shared bathroom, with an open doorway in the middle of each ---
+  for (const w0 of [WALL1, WALL2]){
+    B(w0,w0+0.05,0,H,0,DW[0],mat.wall); B(w0,w0+0.05,0,H,DW[1],IW,mat.wall); B(w0,w0+0.05,2.05,H,DW[0],DW[1],mat.wall);
+  }
+  // a canvas curtain on a rod across each doorway into the bathroom, hung on the room side and partly drawn
+  const canvas=M(0x3D5F8F,{roughness:0.95,side:THREE.DoubleSide});
+  for (const [fa,dir] of [[WALL1,-1],[WALL2+0.05,1]]){
+    const rz=fa+dir*0.04;                                      // just off the wall, in the room
+    B(Math.min(fa,rz)-0.01,Math.max(fa,rz)+0.01,2.01,2.03,DW[0]-0.05,DW[1]+0.05,mat.frame); // rod and brackets
+    const folds=6, fw=(DW[1]-DW[0])*0.82/folds;
+    for (let i=0;i<folds;i++){
+      const z0=DW[0]-0.03+i*fw, off=(i%2?0.012:-0.012)*dir;
+      B(Math.min(rz+off,rz+off+dir*0.01),Math.max(rz+off,rz+off+dir*0.01),0.08,2.0,z0,z0+fw+0.01,canvas);
+    }
+  }
+
+  // --- one bedroom: three-quarter bed on the rear wall, tall cupboard at the bathroom end,
+  //     small kitchenette across from the cupboard on the front wall, window + aircon above the bed ---
+  function bedroom(bed, headAt, cup, kit, win, corner){   // corner: which end of the counter meets the bathroom wall ('hi' = k1, 'lo' = k0)
+    const [a0,a1]=bed, z0=0.03, z1=1.10;                      // 3/4 bed, about 1.07 x 1.88 m
+    B(a0,a1,0.06,0.36,z0,z1,mat.base);
+    for (const a of [a0+0.06,a1-0.10]) for (const z of [z0+0.06,z1-0.10]) B(a,a+0.04,0,0.06,z,z+0.04,mat.dark);
+    B(a0+0.01,a1-0.01,0.36,0.56,z0+0.01,z1-0.01,mat.duvet);
+    const hd = headAt===0 ? [a0+0.04,a0+0.40] : [a1-0.40,a1-0.04];
+    const dr = headAt===0 ? [a0+0.38,a1+0.01] : [a0-0.01,a1-0.38];
+    B(dr[0],dr[1],0.30,0.57,z0-0.01,z1+0.01,mat.duvet);         // duvet drape
+    B(hd[0],hd[1],0.56,0.70,z0+0.15,z1-0.15,mat.pillow);
+    const tw=(a0+a1)/2; B(tw-0.12,tw+0.12,0.565,0.585,0.45,0.75,mat.towel);
+    const plugA = headAt===0 ? a0+0.02 : a1-0.18; B(plugA,plugA+0.16,0.42,0.50,0.001,0.015,mat.white); // plug beside the bed
+    // window, curtain and aircon on the rear wall
+    B(win[0]-0.12,win[1]+0.12,1.96,1.98,0.06,0.08,mat.frame);
+    B(win[0]-0.12,win[1]+0.12,1.00,1.95,0.07,0.075,mat.curtain);
+    const ac=(win[0]+win[1])/2;
+    B(ac-0.40,ac+0.40,2.02,2.30,0.005,0.22,mat.white); B(ac-0.35,ac+0.35,2.04,2.06,0.20,0.23,mat.vent);
+    B(ac-0.38,ac+0.37,0.05,0.62,-T-0.36,-T-0.06,mat.white);
+    const fan=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.01,20),mat.vent); fan.rotation.x=Math.PI/2;
+    fan.position.set(m?mir(ac):ac,0.34,-T-0.365); root.add(fan);
+    // tall grey cupboard, doors facing into the room
+    B(cup[0],cup[1],0,2.10,0,0.58,mat.cup);
+    const cm=(cup[0]+cup[1])/2; B(cm-0.004,cm+0.004,0.02,2.08,0.58,0.583,mat.handle);
+    for (const a of [cm-0.05,cm+0.03]) B(a,a+0.02,0.95,1.20,0.583,0.60,mat.handle);
+    // small kitchenette: mini fridge and a cupboard under a pine counter, round sink and microwave on top
+    const [k0,k1]=kit, kz=IW-0.52;
+    B(k0,k1,0.90,1.70,IW-0.012,IW,mat.greyWall,frontGroup);   // grey splashback on the front wall (hidden with it)
+    B(k0,k1,0.86,0.90,kz-0.02,IW,mat.pine);
+    // sink in the corner by the bathroom wall, mini fridge + microwave at the open end, free counter between
+    const hi=corner==='hi', fr= hi ? [k0,k0+0.52] : [k1-0.52,k1], cb= hi ? [k0+0.52,k1] : [k0,k1-0.52];
+    B(fr[0]+0.02,fr[1]-0.02,0.02,0.84,kz+0.02,IW-0.03,mat.white);                  // mini fridge
+    B(fr[0]+0.03,fr[1]-0.03,0.62,0.625,kz+0.017,kz+0.02,mat.handle);
+    B(cb[0],cb[1],0,0.86,kz,IW,mat.cup);                                            // cupboard under the sink
+    B(cb[0]+0.12,cb[1]-0.12,0.78,0.80,kz-0.02,kz,mat.handle);
+    const sinkA= hi ? k1-0.21 : k0+0.21, tapA= hi ? k1-0.05 : k0+0.05, tapD= hi ? -1 : 1;
+    C(sinkA,0.82,0.905,IW-0.24,0.15,mat.steel,root,24); C(sinkA,0.895,0.906,IW-0.24,0.13,mat.handle,root,24);
+    B(tapA-0.02,tapA+0.02,0.90,1.12,IW-0.26,IW-0.22,mat.black); B(Math.min(tapA,tapA+tapD*0.13),Math.max(tapA,tapA+tapD*0.13),1.10,1.13,IW-0.26,IW-0.22,mat.black); // tap on the side wall
+    const mw=(fr[0]+fr[1])/2;
+    B(mw-0.23,mw+0.23,0.90,1.18,IW-0.40,IW-0.04,mat.steel);                      // microwave on the counter
+    B(mw-0.20,mw+0.10,0.94,1.14,IW-0.405,IW-0.40,mat.black);
+    B(mw+0.12,mw+0.20,0.94,1.14,IW-0.408,IW-0.40,M(0x3A3F45));
+    B(k0,k1,1.38,1.41,IW-0.26,IW,mat.pine);                                       // small shelf
+    for (const a of (hi ? [k1-0.30,k1-0.18] : [k0+0.18,k0+0.30])) C(a,1.41,1.51,IW-0.12,0.04,mat.plate,root,12);
+    B(mw-0.08,mw+0.08,1.22,1.30,IW-0.025,IW-0.012,mat.white);                    // plug above the counter
+    B(Math.min(...bed)+0.3,Math.max(...bed)-0.3,H-0.03,H-0.005,IW/2-0.03,IW/2+0.03,mat.led,roofGroup);
+  }
+  bedroom([0.02,1.90],0,[1.92,WALL1],[1.22,WALL1-0.02],[0.45,1.35],'hi');          // end room
+  bedroom([WALL2+0.55,CW[0]-0.02],1,[WALL2+0.05,WALL2+0.55],[WALL2+0.07,WALL2+1.25],[4.55,5.45],'lo'); // inner room
+
+  // --- shared bathroom between the two rooms: toilet on the rear wall, shower on the front side ---
+  const b0=WALL1+0.05, b1=WALL2, bm=(b0+b1)/2;
+  B(bm-0.20,bm+0.20,0.38,0.80,0,0.18,mat.porcelain);
+  B(bm-0.16,bm+0.16,0,0.40,0.18,0.62,mat.porcelain);
+  B(bm-0.18,bm+0.18,0.40,0.43,0.16,0.64,mat.porcelain);
+  B(bm+0.26,bm+0.30,0.80,0.96,0.02,0.10,mat.frame);                                 // toilet roll holder
+  const sz=IW-0.82;
+  B(b0,b1,0,0.07,sz,IW,mat.porcelain);                                              // shower tray
+  B(b0,b1,0.07,2.20,IW-0.02,IW,mat.tile,frontGroup);                                // dark tiles on the front wall
+  B(b0,b0+0.02,0.07,2.20,sz,IW,mat.tile); B(b1-0.02,b1,0.07,2.20,sz,IW,mat.tile);
+  B(b0+0.02,bm+0.12,0.07,2.0,sz,sz+0.01,mat.glass);                                 // fixed glass panel, gap to step in
+  B(b0+0.02,bm+0.12,1.97,2.0,sz-0.01,sz+0.02,mat.frame); B(bm+0.09,bm+0.12,0.07,2.0,sz-0.01,sz+0.02,mat.frame);
+  B(bm-0.02,bm+0.02,2.0,2.22,IW-0.44,IW-0.40,mat.frame); B(bm-0.14,bm+0.14,1.97,2.0,IW-0.56,IW-0.28,mat.black);
+  B(bm-0.25,bm+0.25,0.006,0.016,0.80,1.30,mat.mat);                                 // bath mat
+  B(bm-0.4,bm+0.4,H-0.03,H-0.005,IW/2-0.03,IW/2+0.03,mat.led,roofGroup);
+}
+room(false); room(true);
+
+
+// ---------- views ----------
+const W=(a,y,z)=>[a-IL/2,y+0.18,z-IW/2];
+const views={
+  front:{p:[3.2,6.2,9.8],t:[0,0.6,0]}, top:{p:[0,16,0.01],t:[0,0,0]},
+  bed:{p:W(1.7,2.7,2.25),t:W(0.75,0.3,0.55)},
+  kitchen:{p:W(0.35,2.0,0.45),t:W(1.95,0.95,1.95)},
+  bath:{p:W(2.97,3.9,3.4),t:W(2.97,0.4,1.0)},
+  hero:{p:W(1.2,5.4,5.6),t:W(3.0,0.3,0.9)}
+};
+let anim=null;
+function setToggle(id,on){
+  document.getElementById(id).setAttribute('aria-pressed',String(on));
+  if (id==='tRoof') roof.visible=on; if (id==='tFront') frontGroup.visible=on;
+}
+// on tall, narrow screens pull the outside views further back so the whole container fits
+function far(name,p,t){
+  if (name!=='front' && name!=='top') return p;
+  const k=camera.aspect<1.3 ? Math.min(2.6,1.3/camera.aspect) : 1;
+  return t.clone().add(p.clone().sub(t).multiplyScalar(k));
+}
+function go(name){
+  const v=views[name];
+  const t=new THREE.Vector3(...v.t);
+  const to={p:far(name,new THREE.Vector3(...v.p),t),t};
+  if (name!=='front' && roof.visible) setToggle('tRoof',false);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){ camera.position.copy(to.p); controls.target.copy(to.t); return; }
+  anim={from:{p:camera.position.clone(),t:controls.target.clone()},to,start:performance.now(),dur:700};
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
+for (const id of ['tRoof','tFront']) document.getElementById(id).addEventListener('click',e=>setToggle(id,e.currentTarget.getAttribute('aria-pressed')!=='true'));
+setToggle('tFront',false);
+function resize(){ const w=stage.clientWidth,h=stage.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.fov=camera.aspect<1?52:40; camera.updateProjectionMatrix(); }
+window.addEventListener('resize',resize); resize();
+{ const t=new THREE.Vector3(...views.front.t); camera.position.copy(far('front',new THREE.Vector3(...views.front.p),t)); controls.target.copy(t); }
+// ?view=bed|kitchen|bath|top|hero opens the model at that view
+{ const qv=new URLSearchParams(location.search).get('view'); if (qv && views[qv]){ camera.position.set(...views[qv].p); controls.target.set(...views[qv].t); } }
+(function loop(now){
+  requestAnimationFrame(loop);
+  if (anim){ let k=Math.min(1,(now-anim.start)/anim.dur); k=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    camera.position.lerpVectors(anim.from.p,anim.to.p,k); controls.target.lerpVectors(anim.from.t,anim.to.t,k); if (k>=1) anim=null; }
+  controls.update(); renderer.render(scene,camera);
+})(performance.now());
+})();
+</script>
+</body>
+</html>
