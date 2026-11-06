@@ -85,14 +85,14 @@ if (!window.THREE || !THREE.OrbitControls){ document.getElementById('err').style
 // Internal ~11.9 x 2.30 x 2.40. Bedroom: bed 1 across the width at the end wall with its cupboard (C) beside it;
 // bed 2, two cupboards and bed 3 lengthwise along the rear wall; bed 4 across the width at the kitchen end with its
 // cupboard. Beds are triple bunks, 1 890 x 920 mm; cupboards beside the cross bunks are 380 mm deep.
-// Then the kitchen (2 000 mm) and the bathroom at the far end.
+// Then the kitchen (2 000 mm) and the bathroom (2 810 mm: two showers and a toilet stall) at the far end.
 const IL=11.90, IW=2.30, H=2.40, T=0.06;
-const BED1=7.55, KIT=[7.60,9.60], BATH0=9.65;          // partitions at 7.55-7.60 and 9.60-9.65
+const BED1=6.99, KIT=[7.04,9.04], BATH0=9.09;          // partitions at 6.99-7.04 and 9.04-9.09
 const BW=0.92, BL=1.89, CLZ=0.38;
 const TI=[0.30,1.03,1.76];                              // bunk platform heights
 const SQ=0.34;                                          // small square windows beside each sleeper's head
-const SLIDE=[2.95,4.45];                                 // sliding glass door into the bedroom (front wall)
-const CANVAS_DOORS=[[8.23,8.98],[10.40,11.15]];         // single door frames with zip-up canvas covers, centred on the kitchen and bathroom
+const SLIDE=[2.75,4.25];                                 // sliding glass door into the bedroom (front wall)
+const CANVAS_DOORS=[[7.665,8.415],[10.12,10.87]];         // single door frames with zip-up canvas covers, centred on the kitchen and bathroom
 
 // ---------- scene ----------
 const stage=document.getElementById('stage');
@@ -162,14 +162,14 @@ const roof=roofGroup; box(-T-0.04,IL+T+0.04,H,H+0.1,-T-0.04,IW+T+0.04,mat.shell,
 
 // bunk positions: two across the width (head on the rear wall), two lengthwise along the rear wall
 const CROSS=[0.00, BED1-BW-0.01];                       // bed 1 and bed 4 (a0)
-const ALONG=[[0.95,'lo'],[4.66,'hi']];                   // bed 2 and bed 3 (a0, which end the head is)
-const CUPS=[[0.95+BL+0.02,0.95+BL+0.02+0.88],[0.95+BL+0.92,0.95+BL+0.92+0.88]]; // the two "C C" cupboards
+const ALONG=[[0.95,'lo'],[4.10,'hi']];                   // bed 2 and bed 3 (a0, which end the head is)
+const CUPS=[[0.95+BL+0.02,0.95+BL+0.02+0.60],[0.95+BL+0.64,0.95+BL+0.64+0.60]]; // the two "C C" cupboards
 
 // ---------- walls, doors and windows ----------
 const frontOps=[{a:SLIDE[0],b:SLIDE[1],y0:0,y1:2.05,slide:true}, ...CANVAS_DOORS.map(d=>({a:d[0],b:d[1],y0:0,y1:2.05}))], rearOps=[];
 for (const a0 of CROSS){ const c=a0+BW/2; for (const t of TI) rearOps.push({a:c-SQ/2,b:c+SQ/2,y0:t+0.20,y1:t+0.20+SQ}); }
 for (const [a0,end] of ALONG){ const c= end==='lo' ? a0+0.30 : a0+BL-0.30; for (const t of TI) rearOps.push({a:c-SQ/2,b:c+SQ/2,y0:t+0.20,y1:t+0.20+SQ}); }
-rearOps.push({a:11.47,b:11.85,y0:1.80,y1:2.12});        // high window in the toilet cubicle
+rearOps.push({a:11.21,b:11.59,y0:1.80,y1:2.12});        // high window in the toilet stall
 function glazing(o,zIn,zOut,parent){
   box(o.a,o.b,o.y0,o.y1,(zIn+zOut)/2-0.004,(zIn+zOut)/2+0.004,mat.glass,parent);
   const zf=zOut>zIn?[zOut,zOut+0.02]:[zOut-0.02,zOut];
@@ -270,7 +270,7 @@ for (const a0 of CROSS){
 // bed 2 and bed 3 lengthwise along the rear wall, two cupboards between them
 for (const [a0,end] of ALONG) tripleBunk(a0,a0+BL,0.02,0.02+BW,true,end);
 // painted timber dividers at the head end of each back-wall bunk, screening it from the end bunk beside it
-B(0.925,0.948,0,2.22,0,0.98,mat.white); B(4.66+BL+0.004,4.66+BL+0.027,0,2.22,0,0.98,mat.white);
+B(0.925,0.948,0,2.22,0,0.98,mat.white); B(ALONG[1][0]+BL+0.004,ALONG[1][0]+BL+0.027,0,2.22,0,0.98,mat.white);
 for (const [c0,c1] of CUPS){
   B(c0,c1,0,2.10,0,0.60,mat.white);
   lockers('z', 0.60, 1, c0, c1, 2.10);
@@ -280,70 +280,75 @@ for (const [c0,c1] of CUPS){
   B(c-0.40,c+0.40,2.12,2.38,0.005,0.22,mat.white); B(c-0.35,c+0.35,2.14,2.16,0.20,0.23,mat.vent);
   B(c-0.38,c+0.38,0.05,0.62,-T-0.36,-T-0.06,mat.white);
   const fan=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.01,20),mat.vent); fan.rotation.x=Math.PI/2; fan.position.set(c,0.34,-T-0.365); root.add(fan); }
-B(5.6,6.4,2.12,2.38,IW-0.22,IW-0.005,mat.white,frontGroup);          // second aircon on the front wall
-for (const c of [1.9,5.6]) B(c-1.2,c+1.2,H-0.03,H-0.005,1.55,1.61,mat.led,roofGroup);
+B(4.75,5.55,2.12,2.38,IW-0.22,IW-0.005,mat.white,frontGroup);          // second aircon on the front wall
+for (const c of [1.75,5.25]) B(c-1.2,c+1.2,H-0.03,H-0.005,1.55,1.61,mat.led,roofGroup);
 
 // ---------- kitchen (2 000 mm): stove side on the rear wall, sink side on the front wall ----------
 // rear: upright fridge, open counter, one freestanding stove; long shelf above with the air fryer and spices
-B(7.62,8.22,0,1.72,0.02,0.64,mat.white); B(7.62,8.22,1.10,1.105,0.64,0.645,mat.handle);
-B(8.16,8.19,0.55,1.00,0.645,0.67,mat.handle); B(8.16,8.19,1.20,1.55,0.645,0.67,mat.handle);
-B(8.24,8.88,0,0.86,0,0.58,mat.cup); B(8.24,8.88,0.86,0.90,0,0.62,mat.pine);
-B(8.55-0.004,8.55+0.004,0.03,0.84,0.58,0.583,mat.handle); for (const a of [8.32,8.62]) B(a,a+0.18,0.76,0.78,0.583,0.60,mat.handle);
-B(8.92,9.52,0,0.90,0,0.60,mat.white);                                       // stove
-B(8.94,9.50,0.20,0.75,0.60,0.605,mat.black); B(8.99,9.45,0.80,0.82,0.605,0.62,mat.handle);
-for (const [a,z] of [[9.07,0.18],[9.37,0.18],[9.07,0.44],[9.37,0.44]]) C(a,0.90,0.92,z,0.085,mat.black,root,18);
-B(8.92,9.52,0.90,1.02,0,0.04,mat.white);
-B(8.24,KIT[1],0.90,1.40,0.001,0.012,mat.greyWall);
-B(8.24,KIT[1],1.45,1.48,0,0.34,mat.pine);                                     // long shelf over the stove side
-B(9.05,9.39,1.48,1.79,0.04,0.34,mat.black); B(9.07,9.37,1.53,1.67,0.34,0.345,M(0x3A3F45)); // air fryer on the shelf
-for (let i=0;i<5;i++) C(8.34+i*0.09,1.48,1.58,0.12,0.03,M([0xB4603D,0xD2B27F,0x4F7D4A,0xC99A2E,0x8C4A3A][i]),root,10); // spice jars
-B(8.28,8.76,1.48,1.68,0.013,0.025,mat.pine); B(8.28,8.29,1.48,1.60,0.025,0.22,mat.pine); B(8.75,8.76,1.48,1.60,0.025,0.22,mat.pine); B(8.28,8.76,1.53,1.555,0.205,0.22,mat.pine); // spice rack: back panel on the wall, sides and a low front rail
+B(7.06,7.66,0,1.72,0.02,0.64,mat.white); B(7.06,7.66,1.10,1.105,0.64,0.645,mat.handle);
+B(7.60,7.63,0.55,1.00,0.645,0.67,mat.handle); B(7.60,7.63,1.20,1.55,0.645,0.67,mat.handle);
+B(7.68,8.32,0,0.86,0,0.58,mat.cup); B(7.68,8.32,0.86,0.90,0,0.62,mat.pine);
+B(7.99-0.004,7.99+0.004,0.03,0.84,0.58,0.583,mat.handle); for (const a of [7.76,8.06]) B(a,a+0.18,0.76,0.78,0.583,0.60,mat.handle);
+B(8.36,8.96,0,0.90,0,0.60,mat.white);                                       // stove
+B(8.38,8.94,0.20,0.75,0.60,0.605,mat.black); B(8.43,8.89,0.80,0.82,0.605,0.62,mat.handle);
+for (const [a,z] of [[8.51,0.18],[8.81,0.18],[8.51,0.44],[8.81,0.44]]) C(a,0.90,0.92,z,0.085,mat.black,root,18);
+B(8.36,8.96,0.90,1.02,0,0.04,mat.white);
+B(7.68,KIT[1],0.90,1.40,0.001,0.012,mat.greyWall);
+B(7.68,KIT[1],1.45,1.48,0,0.34,mat.pine);                                     // long shelf over the stove side
+B(8.49,8.83,1.48,1.79,0.04,0.34,mat.black); B(8.51,8.81,1.53,1.67,0.34,0.345,M(0x3A3F45)); // air fryer on the shelf
+for (let i=0;i<5;i++) C(7.78+i*0.09,1.48,1.58,0.12,0.03,M([0xB4603D,0xD2B27F,0x4F7D4A,0xC99A2E,0x8C4A3A][i]),root,10); // spice jars
+B(7.72,8.20,1.48,1.68,0.013,0.025,mat.pine); B(7.72,7.73,1.48,1.60,0.025,0.22,mat.pine); B(8.19,8.20,1.48,1.60,0.025,0.22,mat.pine); B(7.72,8.20,1.53,1.555,0.205,0.22,mat.pine); // spice rack: back panel on the wall, sides and a low front rail
 // front: door in the middle; work counter with the microwave on a shelf above on one side, double-bowl sink on the other
 const fz=IW-0.60;
-B(7.62,8.20,0,0.86,fz,IW,mat.cup); B(7.62,8.21,0.86,0.90,fz-0.02,IW,mat.pine);           // work area by the door
-B(7.91-0.004,7.91+0.004,0.03,0.84,fz-0.003,fz,mat.handle); for (const a of [7.70,7.97]) B(a,a+0.14,0.76,0.78,fz-0.02,fz-0.003,mat.handle);
-B(7.62,8.21,1.42,1.45,IW-0.42,IW,mat.pine,frontGroup);                                   // microwave shelf
-B(7.66,8.14,1.45,1.73,IW-0.40,IW-0.04,mat.steel,frontGroup); B(7.68,7.98,1.49,1.69,IW-0.405,IW-0.40,mat.black,frontGroup); B(8.00,8.10,1.49,1.69,IW-0.408,IW-0.40,M(0x3A3F45),frontGroup);
-B(9.01,KIT[1],0,0.86,fz,IW,mat.cup); B(9.00,KIT[1],0.86,0.90,fz-0.02,IW,mat.pine);        // sink side
-B(9.30-0.004,9.30+0.004,0.03,0.84,fz-0.003,fz,mat.handle); for (const a of [9.09,9.36]) B(a,a+0.14,0.76,0.78,fz-0.02,fz-0.003,mat.handle);
-for (const a0 of [9.04,9.31]) { B(a0,a0+0.25,0.70,0.905,IW-0.48,IW-0.12,mat.steel); B(a0+0.02,a0+0.23,0.70,0.902,IW-0.46,IW-0.14,mat.handle); }
-B(9.28,9.32,0.90,1.14,IW-0.08,IW-0.04,mat.black); B(9.28,9.32,1.12,1.15,IW-0.22,IW-0.04,mat.black);
-B(9.00,KIT[1],0.90,1.40,IW-0.012,IW,mat.greyWall,frontGroup); B(7.62,8.21,0.90,1.40,IW-0.012,IW,mat.greyWall,frontGroup);
-B(9.00,KIT[1],1.45,1.48,IW-0.32,IW,mat.pine,frontGroup);                                  // shelf over the sink
-for (const a of [9.10,9.22]) C(a,1.48,1.58,IW-0.14,0.04,mat.plate,frontGroup,12);
-C(9.44,1.48,1.51,IW-0.16,0.11,mat.plate,frontGroup,18);
-B(7.9,9.3,H-0.03,H-0.005,IW/2-0.03,IW/2+0.03,mat.led,roofGroup);
+B(7.06,7.64,0,0.86,fz,IW,mat.cup); B(7.06,7.65,0.86,0.90,fz-0.02,IW,mat.pine);           // work area by the door
+B(7.35-0.004,7.35+0.004,0.03,0.84,fz-0.003,fz,mat.handle); for (const a of [7.14,7.41]) B(a,a+0.14,0.76,0.78,fz-0.02,fz-0.003,mat.handle);
+B(7.06,7.65,1.42,1.45,IW-0.42,IW,mat.pine,frontGroup);                                   // microwave shelf
+B(7.10,7.58,1.45,1.73,IW-0.40,IW-0.04,mat.steel,frontGroup); B(7.12,7.42,1.49,1.69,IW-0.405,IW-0.40,mat.black,frontGroup); B(7.44,7.54,1.49,1.69,IW-0.408,IW-0.40,M(0x3A3F45),frontGroup);
+B(8.45,KIT[1],0,0.86,fz,IW,mat.cup); B(8.44,KIT[1],0.86,0.90,fz-0.02,IW,mat.pine);        // sink side
+B(8.74-0.004,8.74+0.004,0.03,0.84,fz-0.003,fz,mat.handle); for (const a of [8.53,8.80]) B(a,a+0.14,0.76,0.78,fz-0.02,fz-0.003,mat.handle);
+for (const a0 of [8.48,8.75]) { B(a0,a0+0.25,0.70,0.905,IW-0.48,IW-0.12,mat.steel); B(a0+0.02,a0+0.23,0.70,0.902,IW-0.46,IW-0.14,mat.handle); }
+B(8.72,8.76,0.90,1.14,IW-0.08,IW-0.04,mat.black); B(8.72,8.76,1.12,1.15,IW-0.22,IW-0.04,mat.black);
+B(8.44,KIT[1],0.90,1.40,IW-0.012,IW,mat.greyWall,frontGroup); B(7.06,7.65,0.90,1.40,IW-0.012,IW,mat.greyWall,frontGroup);
+B(8.44,KIT[1],1.45,1.48,IW-0.32,IW,mat.pine,frontGroup);                                  // shelf over the sink
+for (const a of [8.54,8.66]) C(a,1.48,1.58,IW-0.14,0.04,mat.plate,frontGroup,12);
+C(8.88,1.48,1.51,IW-0.16,0.11,mat.plate,frontGroup,18);
+B(7.34,8.74,H-0.03,H-0.005,IW/2-0.03,IW/2+0.03,mat.led,roofGroup);
 
-// ---------- bathroom (own door on the front wall): two showers and the toilet along the rear wall, basin by the door ----------
-const sz=0.85;
-for (const [s0,s1] of [[BATH0+0.02,10.52],[10.56,11.40]]){
+// ---------- bathroom (own door on the front wall): two showers and a toilet stall along the rear wall, basin by the door ----------
+const sz=0.85, ST=[10.89,IL], SD=1.30;                     // toilet stall: x range and depth from the rear wall
+for (const [s0,s1] of [[BATH0+0.02,9.96],[10.00,10.85]]){
   B(s0,s1,0,0.07,0,sz,mat.porcelain);
   B(s0,s1,0.07,2.20,0.001,0.02,mat.tile);
   B(s0+0.02,(s0+s1)/2+0.10,0.07,2.0,sz-0.01,sz,mat.glass);
   B(s0+0.02,(s0+s1)/2+0.10,1.97,2.0,sz-0.02,sz+0.01,mat.frame); B((s0+s1)/2+0.07,(s0+s1)/2+0.10,0.07,2.0,sz-0.02,sz+0.01,mat.frame);
   const c=(s0+s1)/2; B(c-0.02,c+0.02,2.0,2.22,0.40,0.44,mat.frame); B(c-0.14,c+0.14,1.97,2.0,0.28,0.56,mat.black);
 }
-B(10.52,10.56,0.07,2.20,0,sz,mat.tile); B(11.40,11.44,0,2.20,0,1.05,mat.wall);
-// toilet in the rear corner at the end wall, behind an angled wall like the sketch
-B(11.44,11.84,0.38,0.80,0,0.18,mat.porcelain); B(11.48,11.80,0,0.40,0.18,0.62,mat.porcelain); B(11.46,11.82,0.40,0.43,0.16,0.64,mat.porcelain);
-const ang=new THREE.Mesh(new THREE.BoxGeometry(0.34,2.20,0.05),mat.wall); ang.position.set(11.55,1.10,1.15); ang.rotation.y=0.70; ang.castShadow=true; root.add(ang);
-B(11.86,11.89,0.80,0.96,0.70,0.78,mat.frame);
+B(9.96,10.00,0.07,2.20,0,sz,mat.tile);
+// toilet stall: side wall, front wall with a door left ajar, toilet on the rear wall under the high window
+B(10.85,ST[0],0,2.20,0,SD+0.04,mat.wall);
+const SDOOR=[11.12,11.84];
+B(ST[0],SDOOR[0],0,2.20,SD,SD+0.04,mat.wall); B(SDOOR[1],ST[1],0,2.20,SD,SD+0.04,mat.wall); B(SDOOR[0],SDOOR[1],2.05,2.20,SD,SD+0.04,mat.wall);
+hingedDoor(SDOOR[1]-0.03,SD,SDOOR[1]-SDOOR[0],Math.PI/2-1.30);       // opens in, folding back against the end wall
+{ const tc=11.40;
+  B(tc-0.20,tc+0.20,0.38,0.80,0,0.18,mat.porcelain); B(tc-0.16,tc+0.16,0,0.40,0.18,0.62,mat.porcelain); B(tc-0.18,tc+0.18,0.40,0.43,0.16,0.64,mat.porcelain);
+  B(IL-0.03,IL,0.70,0.86,0.70,0.78,mat.frame);                 // roll holder on the end wall
+  B(tc-0.03,tc+0.03,0.80,0.82,0.06,0.12,mat.handle); }         // flush button
 // basin with a mirror on the front wall, beside the door
-const bc=10.02;
+const bc=9.62;
 B(bc-0.20,bc+0.20,0.72,0.74,IW-0.40,IW,mat.porcelain); B(bc-0.17,bc+0.17,0.74,0.88,IW-0.38,IW-0.04,mat.porcelain);
 B(bc-0.19,bc-0.16,0.40,0.72,IW-0.03,IW,mat.porcelain); B(bc+0.16,bc+0.19,0.40,0.72,IW-0.03,IW,mat.porcelain);
 B(bc-0.02,bc+0.02,0.88,1.08,IW-0.07,IW-0.03,mat.black); B(bc-0.02,bc+0.02,1.05,1.08,IW-0.18,IW-0.05,mat.black);
 B(bc-0.15,bc+0.15,1.20,1.65,IW-0.012,IW-0.001,M(0xBFD3E6,{metalness:0.5,roughness:0.15}),frontGroup);
-B(10.0,11.0,0.006,0.016,0.95,1.40,mat.mat);
-B(9.9,11.3,H-0.03,H-0.005,IW/2-0.03,IW/2+0.03,mat.led,roofGroup);
+B(9.35,10.55,0.006,0.016,0.95,1.40,mat.mat);
+B(9.4,11.5,H-0.03,H-0.005,IW/2-0.03,IW/2+0.03,mat.led,roofGroup);
 
 // ---------- views ----------
 const W=(a,y,z)=>[a-IL/2,y+0.18,z-IW/2];
 const views={
   front:{p:[3.2,6.2,9.8],t:[0,0.6,0]}, top:{p:[0,16,0.01],t:[0,0,0]},
   rear:{p:[-3.0,3.2,-8.6],t:[0,1.0,0]},
-  bed:{p:W(3.7,3.6,4.6),t:W(3.7,0.8,1.0)},
-  kitchen:{p:W(8.6,3.3,3.8),t:W(8.6,0.8,1.0)},
+  bed:{p:W(3.5,3.6,4.6),t:W(3.5,0.8,1.0)},
+  kitchen:{p:W(8.04,3.3,3.8),t:W(8.04,0.8,1.0)},
   bath:{p:W(10.7,3.6,3.8),t:W(10.7,0.4,0.9)},
   hero:{p:W(2.4,5.2,6.0),t:W(3.8,0.4,1.0)}
 };

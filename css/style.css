@@ -71,7 +71,7 @@ h3 { font-size: 1.2rem; letter-spacing: -0.01em; }
 h4 { font-size: 1.05rem; letter-spacing: 0; }
 
 p { margin: 0 0 0.8em; }
-.lede { font-size: 1.1rem; color: var(--muted); max-width: 42em; }
+.lede { font-size: 1.1rem; color: var(--muted); max-width: 42em; margin-top: -10px; margin-bottom: -40px; }
 .muted { color: var(--muted); }
 
 .wrap {
@@ -512,6 +512,7 @@ p { margin: 0 0 0.8em; }
 @media (max-width: 760px) { .facts { grid-template-columns: 1fr; } }
 
 /* Contact page */
+.contact{margin-top: -20px;}
 .contact-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: var(--gap); align-items: start; }
 @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; } }
 .contact-list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--rule); }
@@ -723,3 +724,4 @@ h3 { font-stretch: 108%; font-weight: 750; }
 
 /* RT Laundry box: text sits at the top of its column, beside the phone screens */
 .feature > div:first-child { align-self: start; }
+
