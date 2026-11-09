@@ -20,6 +20,7 @@
   if (y) y.textContent = new Date().getFullYear();
 
   var form = document.getElementById("enquiry");
+  var pageOpened = Date.now();                                   // the Sheet script ignores forms sent in under 3 seconds (bots)
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -57,7 +58,8 @@
         body: JSON.stringify({
           subject: subject,
           name: f.name.value, email: f.email.value, company: f.company.value, phone: f.phone.value,
-          unit: f.unit.value, people: f.people.value, message: f.message.value
+          unit: f.unit.value, people: f.people.value, message: f.message.value,
+          elapsed: Date.now() - pageOpened, botcheck: f.botcheck && f.botcheck.checked ? "1" : ""
         })
       }).then(function (r) {
         return r.text().then(function (t) {
