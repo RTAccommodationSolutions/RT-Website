@@ -52,16 +52,23 @@
       btn.disabled = true; hint.textContent = "Sending…";
       fetch(SHEET_URL, {                                        // sent as plain text so Google accepts it from another site
         method: "POST",
+        credentials: "omit",                                    // never send the visitor's Google login, or Google answers 401 to signed-in visitors
+        redirect: "follow",
         body: JSON.stringify({
           subject: subject,
           name: f.name.value, email: f.email.value, company: f.company.value, phone: f.phone.value,
           unit: f.unit.value, people: f.people.value, message: f.message.value
         })
-      }).then(function (r) { return r.json(); }).then(function (res) {
-        if (!res.success) throw new Error(res.message);
+      }).then(function (r) {
+        return r.text().then(function (t) {
+          try { return JSON.parse(t); } catch (x) { throw new Error("Not JSON (HTTP " + r.status + "): " + t.slice(0, 300)); }
+        });
+      }).then(function (res) {
+        if (!res.success) throw new Error("Script said: " + res.message);
         form.reset();
         hint.textContent = "Thanks, your enquiry has been sent. We'll get back to you soon.";
-      }).catch(function () {
+      }).catch(function (err) {
+        if (window.console) console.warn("Enquiry form could not send:", err && err.message ? err.message : err);
         openEmailApp("We couldn't send that from here. ");
       }).then(function () { btn.disabled = false; });
     });
