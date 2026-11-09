@@ -5,7 +5,7 @@
   // Google Sheet web app link (ends in /exec, see _setup/contact-form-google-sheet.txt). Paste it between the
   // quotes to save enquiries to the Sheet and email them to CONTACT_EMAIL. Leave it empty and the form opens
   // the visitor's email app instead.
-  var SHEET_URL = "https://script.google.com/macros/s/AKfycbyU64M1vF3RBJKZg2qvAyKdsBza6f2UtPp3QtbiS-953pODFezrGVt3RdXH6EcFFVVuEg/exec";
+  var SHEET_URL = "https://script.google.com/macros/s/AKfycbycPMW8WuC3Zb0MomwIHzcbjwChgNEKzVdJj2ELVXmb9cQjeBym3aPFL438Q9iws61rdg/exec";
 
   var toggle = document.querySelector(".nav-toggle");
   var nav = document.getElementById("site-nav");
