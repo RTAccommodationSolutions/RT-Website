@@ -2,6 +2,10 @@
 (function () {
   // Where enquiries from the contact form go. Replace with RT's real address.
   var CONTACT_EMAIL = "admin@rtaccomodationsolutions.co.za";
+  // Google Sheet web app link (ends in /exec, see _setup/contact-form-google-sheet.txt). Paste it between the
+  // quotes to save enquiries to the Sheet and email them to CONTACT_EMAIL. Leave it empty and the form opens
+  // the visitor's email app instead.
+  var SHEET_URL = "https://script.google.com/macros/s/AKfycbyU64M1vF3RBJKZg2qvAyKdsBza6f2UtPp3QtbiS-953pODFezrGVt3RdXH6EcFFVVuEg/exec";
 
   var toggle = document.querySelector(".nav-toggle");
   var nav = document.getElementById("site-nav");
@@ -37,10 +41,31 @@
         f.message.value
       ].join("\n");
       var subject = "Accommodation enquiry" + (f.company.value ? " from " + f.company.value : "");
-      window.location.href = "mailto:" + CONTACT_EMAIL +
-        "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-      hint.textContent = "Your email app should open now. If it doesn't, email us at " + CONTACT_EMAIL + ".";
+      function openEmailApp(lead) {
+        window.location.href = "mailto:" + CONTACT_EMAIL +
+          "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        hint.textContent = (lead || "") + "Your email app should open now. If it doesn't, email us at " + CONTACT_EMAIL + ".";
+      }
+      if (!SHEET_URL) { openEmailApp(); return; }
+      if (f.botcheck && f.botcheck.checked) return;              // spam bots tick the hidden box
+      var btn = form.querySelector("button[type=submit]");
+      btn.disabled = true; hint.textContent = "Sending…";
+      fetch(SHEET_URL, {                                        // sent as plain text so Google accepts it from another site
+        method: "POST",
+        body: JSON.stringify({
+          subject: subject,
+          name: f.name.value, email: f.email.value, company: f.company.value, phone: f.phone.value,
+          unit: f.unit.value, people: f.people.value, message: f.message.value
+        })
+      }).then(function (r) { return r.json(); }).then(function (res) {
+        if (!res.success) throw new Error(res.message);
+        form.reset();
+        hint.textContent = "Thanks, your enquiry has been sent. We'll get back to you soon.";
+      }).catch(function () {
+        openEmailApp("We couldn't send that from here. ");
+      }).then(function () { btn.disabled = false; });
     });
+    if (SHEET_URL) document.getElementById("enquiry-hint").textContent = "We'll get back to you by email or phone.";
   }
 })();
 
