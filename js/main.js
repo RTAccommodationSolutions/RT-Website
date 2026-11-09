@@ -1,7 +1,7 @@
 // Mobile menu, footer year and the contact form. That's all the JS the site needs.
 (function () {
   // Where enquiries from the contact form go. Replace with RT's real address.
-  var CONTACT_EMAIL = "info@your-domain.co.za";
+  var CONTACT_EMAIL = "admin@rtaccomodationsolutions.co.za";
 
   var toggle = document.querySelector(".nav-toggle");
   var nav = document.getElementById("site-nav");
