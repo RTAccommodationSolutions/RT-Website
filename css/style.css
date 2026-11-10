@@ -725,3 +725,13 @@ h3 { font-stretch: 108%; font-weight: 750; }
 /* RT Laundry box: text sits at the top of its column, beside the phone screens */
 .feature > div:first-child { align-self: start; }
 
+
+/* What's inside: full-width list, two columns on wider screens */
+.inside { background: var(--surface); border: 1px solid var(--rule); padding: var(--pad); }
+.inside .ticks { display: grid; grid-template-columns: 1fr 1fr; column-gap: calc(var(--gap) * 2); }
+.inside .ticks li, .inside .ticks li:last-child { border-bottom: 0; border-top: 1px solid var(--rule); }
+.inside .ticks li:nth-child(-n+2) { border-top: 0; }
+@media (max-width: 760px) {
+  .inside .ticks { grid-template-columns: 1fr; }
+  .inside .ticks li:nth-child(2) { border-top: 1px solid var(--rule); }
+}
