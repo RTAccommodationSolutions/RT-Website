@@ -146,3 +146,50 @@
     }
   }
 })();
+
+// "WhatsApp us" buttons: ask who to chat to. The numbers live here only; the button
+// itself links to the office number, so it still works if this script doesn't load.
+(function () {
+  var WHATSAPP = [
+    { label: "Office", number: "27825271889", shown: "+27 82 527 1889" },
+    { label: "Pierre (Owner)", number: "27795123255", shown: "+27 79 512 3255" }
+  ];
+  var buttons = document.querySelectorAll("[data-wa-choose]");
+  if (!buttons.length) return;
+
+  var pop = document.createElement("div");
+  pop.className = "wa-pop"; pop.hidden = true;
+  pop.innerHTML =
+    '<div class="wa-box" role="dialog" aria-modal="true" aria-labelledby="wa-title">' +
+      '<button type="button" class="wa-close" aria-label="Close">&times;</button>' +
+      '<h2 id="wa-title">WhatsApp us</h2><p>Who would you like to chat to?</p>' +
+      WHATSAPP.map(function (c) {
+        return '<a class="wa-opt" href="https://wa.me/' + c.number + '" target="_blank" rel="noopener">' +
+          '<b>' + c.label + '</b><span>' + c.shown + '</span><i aria-hidden="true">&rarr;</i></a>';
+      }).join("") +
+    '</div>';
+  document.body.appendChild(pop);
+  var box = pop.querySelector(".wa-box"), opener = null;
+
+  function close() { pop.hidden = true; document.documentElement.classList.remove("wa-open"); if (opener) opener.focus(); }
+  [].forEach.call(buttons, function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault(); opener = btn;
+      pop.hidden = false; document.documentElement.classList.add("wa-open");
+      pop.querySelector(".wa-opt").focus();
+    });
+  });
+  pop.addEventListener("click", function (e) {
+    if (e.target === pop || e.target.closest(".wa-close")) close();
+    else if (e.target.closest(".wa-opt")) setTimeout(close, 0);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (pop.hidden) return;
+    if (e.key === "Escape") close();
+    if (e.key === "Tab") {                                      // keep focus inside the box
+      var f = box.querySelectorAll("button, a"), first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+})();
